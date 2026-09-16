@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subnetting Concepts Calculator</title>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --accent: #2563eb;
+            --net-color: #ef4444;
+            --host-color: #3b82f6;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #334155;
+            --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.5; padding: 20px 0; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 0 1rem; }
+        h1 { margin-bottom: 1.5rem; color: var(--primary); font-size: 1.8rem; text-align: center; }
+
+        /* Controls Section */
+        .controls-card { background: var(--card-bg); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .inputs-grid { display: grid; grid-template-columns: repeat(4, 1fr) 2fr; gap: 10px; }
+        .field { display: flex; flex-direction: column; }
+        .field label { font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 4px; }
+        input, select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 4px; font-size: 1rem; outline: none; }
+        input:focus, select:focus { border-color: var(--accent); }
+
+        /* Visual Legend */
+        .legend { display: flex; gap: 15px; margin-bottom: 1rem; font-size: 0.9rem; justify-content: center; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-weight: 500; }
+        .legend-box { width: 14px; height: 14px; border-radius: 3px; }
+
+        /* Educational Concept Cards */
+        .section-title { font-size: 1.2rem; margin: 1.5rem 0 1rem 0; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+        .concept-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem; margin-bottom: 1rem; }
+        .concept-card h3 { font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem; display: flex; justify-content: space-between; flex-wrap: wrap; }
+        
+        .binary-display { font-family: 'Courier New', Courier, monospace; font-size: 1.15rem; letter-spacing: 1px; word-break: break-all; margin: 0.5rem 0; background: #f1f5f9; padding: 10px 14px; border-radius: 6px; }
+        .net-bit { color: var(--net-color); font-weight: bold; }
+        .host-bit { color: var(--host-color); font-weight: bold; }
+
+        .tip-box { background: #eff6ff; border-left: 4px solid var(--accent); padding: 8px 12px; font-size: 0.85rem; color: #1e40af; border-radius: 0 4px 4px 0; margin-top: 8px; }
+
+        @media (max-width: 640px) {
+            .inputs-grid { grid-template-columns: repeat(2, 1fr); }
+            .inputs-grid .field:last-child { grid-column: span 2; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Subnetting Concepts Calculator</h1>
+
+        <!-- Formulaire de saisie -->
+        <div class="controls-card">
+            <div class="inputs-grid">
+                <div class="field">
+                    <label>1st Octet</label>
+                    <input type="number" id="o1" min="0" max="255" value="172">
+                </div>
+                <div class="field">
+                    <label>2nd Octet</label>
+                    <input type="number" id="o2" min="0" max="255" value="16">
+                </div>
+                <div class="field">
+                    <label>3rd Octet</label>
+                    <input type="number" id="o3" min="0" max="255" value="1">
+                </div>
+                <div class="field">
+                    <label>4th Octet</label>
+                    <input type="number" id="o4" min="0" max="255" value="1">
+                </div>
+                <div class="field">
+                    <label>Subnet Mask</label>
+                    <select id="mask-select"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item"><div class="legend-box" style="background: var(--net-color);"></div> Network Bits</div>
+            <div class="legend-item"><div class="legend-box" style="background: var(--host-color);"></div> Host Bits</div>
+        </div>
+
+        <!-- Equivalent Binaire Base -->
+        <div class="section-title">Binary Equivalents</div>
+        
+        <div class="concept-card">
+            <h3>IP Address Binary <span id="dec-ip-view">172.16.1.1</span></h3>
+            <div class="binary-display" id="bin-ip-view"></div>
+        </div>
+
+        <div class="concept-card">
+            <h3>Subnet Mask Binary <span id="dec-mask-view">255.255.192.0</span></h3>
+            <div class="binary-display" id="bin-mask-view"></div>
+        </div>
+
+        <!-- Breakdown pédagogique -->
+        <div class="section-title">Subnet Concepts Breakdown</div>
+
+        <div class="concept-card">
+            <h3>Network Address <span id="dec-net-view">-</span></h3>
+            <div class="binary-display" id="bin-net-view"></div>
+            <div class="tip-box">Tip: To work out the network address, fill the host portion with binary zeros.</div>
+        </div>
+
+        <div class="concept-card">
+            <h3>First Host Address <span id="dec-first-view">-</span></h3>
+            <div class="binary-display" id="bin-first-view"></div>
+            <div class="tip-box">Tip: To work out the first host address, fill the host portion with binary zeros except for the last bit which is set to a binary one.</div>
+        </div>
+
+        <div class="concept-card">
+            <h3>Last Host Address <span id="dec-last-view">-</span></h3>
+            <div class="binary-display" id="bin-last-view"></div>
+            <div class="tip-box">Tip: To work out the last host address, fill the host portion with binary ones except for the last bit which is set to a binary zero.</div>
+        </div>
+
+        <div class="concept-card">
+            <h3>Broadcast Address <span id="dec-bcast-view">-</span></h3>
+            <div class="binary-display" id="bin-bcast-view"></div>
+            <div class="tip-box">Tip: To work out the broadcast address, fill the host portion with binary ones.</div>
+        </div>
+    </div>
+
+<script>
+    const masks = [
+        "255.0.0.0", "255.128.0.0", "255.192.0.0", "255.224.0.0", "255.240.0.0", "255.248.0.0", "255.252.0.0", "255.254.0.0",
+        "255.255.0.0", "255.255.128.0", "255.255.192.0", "255.255.224.0", "255.255.240.0", "255.255.248.0", "255.255.252.0", "255.255.254.0",
+        "255.255.255.0", "255.255.255.128", "255.255.255.192", "255.255.255.224", "255.255.255.240", "255.255.255.248", "255.255.255.252"
+    ];
+
+    const maskSelect = document.getElementById('mask-select');
+    masks.forEach(mask => {
+        const opt = document.createElement('option');
+        opt.value = mask;
+        opt.textContent = mask;
+        if(mask === "255.255.192.0") opt.selected = true;
+        maskSelect.appendChild(opt);
+    });
+
+    function getCidr(maskStr) {
+        return maskStr.split('.')
+            .map(octet => parseInt(octet, 10).toString(2))
+            .join('')
+            .split('1').length - 1;
+    }
+
+    function renderBinarySplit(intVal, cidr) {
+        let fullBin = (intVal >>> 0).toString(2).padStart(32, '0');
+        let html = '';
+        
+        for (let i = 0; i < 32; i++) {
+            if (i > 0 && i % 8 === 0) html += '.';
+            const bitClass = i < cidr ? 'net-bit' : 'host-bit';
+            html += `<span class="${bitClass}">${fullBin[i]}</span>`;
+        }
+        return html;
+    }
+
+    function intToIp(int) {
+        return [
+            (int >>> 24) & 255,
+            (int >>> 16) & 255,
+            (int >>> 8) & 255,
+            int & 255
+        ].join('.');
+    }
+
+    function update() {
+        const o1 = parseInt(document.getElementById('o1').value) || 0;
+        const o2 = parseInt(document.getElementById('o2').value) || 0;
+        const o3 = parseInt(document.getElementById('o3').value) || 0;
+        const o4 = parseInt(document.getElementById('o4').value) || 0;
+        const maskStr = maskSelect.value;
+
+        const ipInt = ((o1 << 24) | (o2 << 16) | (o3 << 8) | o4) >>> 0;
+        const cidr = getCidr(maskStr);
+        
+        const maskInt = (0xFFFFFFFF << (32 - cidr)) >>> 0;
+        const wildcardInt = (~maskInt) >>> 0;
+        const netInt = (ipInt & maskInt) >>> 0;
+        const bcastInt = (netInt | wildcardInt) >>> 0;
+
+        const firstHostInt = cidr === 32 ? netInt : netInt + 1;
+        const lastHostInt = cidr === 32 ? netInt : bcastInt - 1;
+
+        document.getElementById('dec-ip-view').innerText = `${o1}.${o2}.${o3}.${o4}`;
+        document.getElementById('bin-ip-view').innerHTML = renderBinarySplit(ipInt, cidr);
+
+        document.getElementById('dec-mask-view').innerText = maskStr;
+        document.getElementById('bin-mask-view').innerHTML = renderBinarySplit(maskInt, cidr);
+
+        document.getElementById('dec-net-view').innerText = intToIp(netInt);
+        document.getElementById('bin-net-view').innerHTML = renderBinarySplit(netInt, cidr);
+
+        document.getElementById('dec-first-view').innerText = intToIp(firstHostInt);
+        document.getElementById('bin-first-view').innerHTML = renderBinarySplit(firstHostInt, cidr);
+
+        document.getElementById('dec-last-view').innerText = intToIp(lastHostInt);
+        document.getElementById('bin-last-view').innerHTML = renderBinarySplit(lastHostInt, cidr);
+
+        document.getElementById('dec-bcast-view').innerText = intToIp(bcastInt);
+        document.getElementById('bin-bcast-view').innerHTML = renderBinarySplit(bcastInt, cidr);
+    }
+
+    ['o1', 'o2', 'o3', 'o4'].forEach(id => {
+        document.getElementById(id).addEventListener('input', update);
+    });
+    maskSelect.addEventListener('change', update);
+
+    update();
+</script>
+</body>
+</html>
