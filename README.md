@@ -36,4 +36,4 @@ Un outil web interactif et pédagogique conçu pour aider à comprendre et analy
 
 1. **Cloner le projet :**
    ```bash
-   git clone [ git clone https://github.com/ousmaneissaadam39-bit/Subnetting-Concepts-Calculator.git](https:// git clone https://github.com/ousmaneissaadam39-bit/Subnetting-Concepts-Calculator.git)
+   git clone https://github.com/ousmaneissaadam39-bit/Subnetting-Concepts-Calculator.git
